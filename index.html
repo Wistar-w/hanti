@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>孩子瞎打哒小测试捏</title>
+    <style>
+        /* ========== 全局样式 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ========== 🌟 背景图片设置（你需要修改的地方 1/2）========== */
+        /* 请将下面的 'images/bg.jpg' 替换为你自己的背景图片路径。
+           支持 jpg, png, webp 等格式。图片建议浅色、柔和，避免干扰文字。
+           如果图片放在同目录下，直接写文件名，例如 'bg.png'。
+           如果放在子文件夹中，例如 images/ 下，则写 'images/你的图片名.jpg' */
+        body {
+            background-image: url('images/bg.jpg');   /* 👈 在这里修改背景图片路径 */
+            background-size: cover;                   /* 背景覆盖整个页面 */
+            background-position: center center;       /* 居中显示 */
+            background-attachment: fixed;             /* 背景固定，不随滚动条滚动 */
+            background-repeat: no-repeat;              /* 不重复平铺 */
+            background-color: #fef7e8;                /* 图片加载慢时的后备颜色 */
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            color: #4a3b2c;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        /* 主卡片容器：半透明白色背景，让文字更清晰，同时透出背景图 */
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: rgba(255, 250, 243, 0.92);   /* 柔和米白半透明，可调整透明度 */
+            border-radius: 48px;
+            padding: 2rem;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            backdrop-filter: blur(2px);               /* 轻微模糊背景，更柔和（可选） */
+            transition: all 0.2s;
+        }
+
+        /* 开始界面 */
+        .start-screen {
+            text-align: center;
+        }
+        .start-title {
+            font-size: 2rem;
+            color: #b97f5c;
+            margin-bottom: 1rem;
+        }
+        .start-desc {
+            font-size: 1rem;
+            color: #5e4b38;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .start-btn {
+            background: #e6ccb2;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #4a3b2c;
+            transition: all 0.2s;
+        }
+        .start-btn:hover {
+            background: #ddb892;
+            transform: scale(1.02);
+        }
+
+        /* 题目界面 */
+        .quiz-screen {
+            display: none;
+        }
+        .progress {
+            font-size: 0.85rem;
+            color: #b97f5c;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+        .question-text {
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin: 1.5rem 0 2rem;
+            line-height: 1.4;
+            color: #5e3e2b;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .option-btn {
+            background: #fef0e2;
+            border: 1px solid #e6ccb2;
+            border-radius: 60px;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            color: #4a3b2c;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .option-btn:hover {
+            background: #fae6d2;
+            transform: scale(1.01);
+            border-color: #ddb892;
+        }
+        .option-prefix {
+            font-weight: bold;
+            color: #b97f5c;
+            width: 28px;
+            text-align: center;
+        }
+
+        /* 结果界面 */
+        .result-area {
+            text-align: center;
+        }
+        .result-img {
+            max-width: 180px;
+            margin: 1rem auto;
+            border-radius: 32px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+        }
+        .result-img img {
+            width: 100%;
+            border-radius: 32px;
+        }
+        .type-name {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #b97f5c;
+            margin: 1rem 0;
+        }
+        .type-desc {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #5e4b38;
+            margin: 1rem 0;
+        }
+        .restart-btn {
+            background: #e6ccb2;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            color: #4a3b2c;
+        }
+        .restart-btn:hover {
+            background: #ddb892;
+        }
+        footer {
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            color: #c2aa8a;
+        }
+
+        /* 手机适配 */
+        @media (max-width: 550px) {
+            .container { padding: 1.5rem; }
+            .question-text { font-size: 1.3rem; }
+            .option-btn { padding: 0.7rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <!-- 开始界面 -->
+    <div class="start-screen" id="startScreen">
+        <div class="start-title">🌱 孩子瞎打哒小测试捏</div>
+        <div class="start-desc">没有标准答案，只是你此刻的样子。<br>慢慢来，凭第一感觉选就好～</div>
+        <button class="start-btn" id="startBtn">✨ 开始测试 ✨</button>
+        <footer>🌙 你这样就很好</footer>
+    </div>
+
+    <!-- 题目界面（初始隐藏） -->
+    <div class="quiz-screen" id="quizScreen"></div>
+</div>
+
+<script>
+    // ---------- 原始题目数据（共12题）----------
+    const originalQuestions = [
+        { text: "周末大部分时间，你更倾向于……", options: ["和朋友一起做点什么，哪怕只是待着", "一个人安安静静地看书或发呆"], dim: "IE" },
+        { text: "参加一个不熟悉的聚会，你通常……", options: ["慢慢就会活跃起来，能认识新朋友", "更希望早点结束，回家充电"], dim: "IE" },
+        { text: "当心里有压力时，你更容易……", options: ["找个人聊一聊，说出来会轻松", "自己消化，写写画画或听音乐"], dim: "IE" },
+        { text: "你更喜欢哪种学习或思考方式？", options: ["跟着直觉和灵感，喜欢联想", "一步步看事实，喜欢具体例子"], dim: "NS" },
+        { text: "对于未来，你更容易被什么吸引？", options: ["各种可能性和新奇的想象", "实际可行的、能摸到的计划"], dim: "NS" },
+        { text: "看一幅画或听一首歌时，你更在意……", options: ["它带给你的感觉和背后故事", "它的色彩、旋律本身"], dim: "NS" },
+        { text: "做重要决定时，你更依赖……", options: ["逻辑分析，尽量客观", "内心的感受，以及对他人的影响"], dim: "TF" },
+        { text: "朋友向你倾诉烦恼，你通常先……", options: ["帮他分析原因，找解决办法", "先陪着他，让他感到被理解"], dim: "TF" },
+        { text: "你认为“公平”更多是……", options: ["规则和道理上的一致", "每个人的感受都被照顾到"], dim: "TF" },
+        { text: "对于日常安排，你更习惯……", options: ["有个大概的计划，不喜欢太乱", "随性一点，看当时心情"], dim: "JP" },
+        { text: "面对一件需要完成的事，你通常……", options: ["尽早做完，心里踏实", "在截止前慢慢做，有时更有灵感"], dim: "JP" },
+        { text: "你的房间或桌面更多是……", options: ["整洁有序，每样东西有固定位置", "自由摆放，但自己找得到"], dim: "JP" }
+    ];
+
+    // ---------- 打乱题目顺序（Fisher-Yates 随机算法）----------
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // 打乱题目，每次刷新顺序都不同
+    let questions = shuffleArray([...originalQuestions]);
+
+    // 存储分数
+    let scores = { IE: 0, NS: 0, TF: 0, JP: 0 };
+    let totalPerDim = { IE: 0, NS: 0, TF: 0, JP: 0 };
+    questions.forEach(q => { totalPerDim[q.dim]++; });
+
+    let currentIndex = 0;
+    let answers = [];
+
+    // ---------- 结果图片映射（你需要修改的地方 2/2）----------
+    // 请将下面的图片路径换成你自己的本地图片路径
+    // 注意：所有图片格式已统一为 .png（原 ENTJ 的 .jpg 已改为 .png）
+    const typeDetails = {
+        "INFJ": { name: "🌙 月光引路人", desc: "你像深夜里安静的月光，能看见别人心底的褶皱，也常常为自己留一盏灯哇（作者本人哇）", img: "images/infj.png" },
+        "INFP": { name: "🍃 晨风诗人", desc: "你的内心有一座金色城堡，里面住着很多情绪和故事捏", img: "images/infp.png" },
+        "INTJ": { name: "🏔️ 远见者", desc: "你习惯看得很远，理性中带着一种沉静的力量哇", img: "images/intj.png" },
+        "INTP": { name: "🔍 好奇的星", desc: "你喜欢拆解问题背后的逻辑，像一个安静的探索者呐", img: "images/intp.png" },
+        "ENFJ": { name: "🌻 温暖的光", desc: "你天生能感受到他人的情绪，像阳光一样让人想靠近哇", img: "images/enfj.png" },
+        "ENFP": { name: "🦋 自由的蝶", desc: "你的灵感像蝴蝶一样四处飞舞，热爱可能性捏", img: "images/enfp.png" },
+        "ENTJ": { name: "⚡ 领航者", desc: "你果断、有方向感，总能看到下一步捏", img: "images/entj.png" },
+        "ENTP": { name: "✨ 创意的火", desc: "你的脑子里总有新点子，喜欢挑战常规哇", img: "images/entp.png" },
+        "ISFJ": { name: "🍂 守护者", desc: "你默默记住很多人的喜好，用自己的方式照顾身边人捏", img: "images/isfj.png" },
+        "ISFP": { name: "🎨 静默画家", desc: "你通过艺术、行动或沉默表达自己捏", img: "images/isfp.png" },
+        "ISTJ": { name: "📚 踏实的大地", desc: "你重视规则和责任，像土地一样可靠哇", img: "images/istj.png" },
+        "ISTP": { name: "🔧 灵巧的手", desc: "你擅长解决实际问题，喜欢动手和逻辑呢", img: "images/istp.png" },
+        "ESFJ": { name: "🌸 温暖园丁", desc: "你擅长营造和谐，总是记得别人的小事哇", img: "images/esfj.png" },
+        "ESFP": { name: "🎉 阳光火花", desc: "你活在当下，给周围带来快乐捏", img: "images/esfp.png" },
+        "ESTJ": { name: "🏛️ 秩序的柱", desc: "你高效、有条理，像一座稳固的桥梁哇", img: "images/estj.png" },
+        "ESTP": { name: "⚡ 行动的风", desc: "你灵活、务实，喜欢挑战呐", img: "images/estp.png" }
+    };
+    const defaultResult = { name: "🌟 独特的你", desc: "你的组合很少见，但每一种都是自然的礼物。", img: "images/default.png" };
+
+    // 计算 MBTI 四个字母
+    function computeMBTI() {
+        let type = "";
+        type += (scores.IE >= totalPerDim.IE/2) ? "E" : "I";
+        type += (scores.NS >= totalPerDim.NS/2) ? "N" : "S";
+        type += (scores.TF >= totalPerDim.TF/2) ? "T" : "F";
+        type += (scores.JP >= totalPerDim.JP/2) ? "J" : "P";
+        return type;
+    }
+
+    // 记录答案并跳转下一题
+    function recordAnswer(option) {
+        const q = questions[currentIndex];
+        const dim = q.dim;
+        if (option === 'left') {
+            scores[dim] += 1;
+        }
+        answers.push(option);
+        if (currentIndex + 1 < questions.length) {
+            currentIndex++;
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    // 渲染当前题目
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        const progressText = `${currentIndex+1} / ${questions.length}`;
+        const quizScreen = document.getElementById('quizScreen');
+        quizScreen.innerHTML = `
+            <div class="progress">🌼 这是第 ${progressText} 题鸭</div>
+            <div class="question-text">${q.text}</div>
+            <div class="options">
+                <div class="option-btn" data-opt="left">
+                    <span class="option-prefix">A</span> ${q.options[0]}
+                </div>
+                <div class="option-btn" data-opt="right">
+                    <span class="option-prefix">B</span> ${q.options[1]}
+                </div>
+            </div>
+            <footer>凭第一感觉选就好捏✨</footer>
+        `;
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const opt = btn.getAttribute('data-opt');
+                recordAnswer(opt);
+            });
+        });
+    }
+
+    // 显示结果（配图）
+    function showResult() {
+        const mbti = computeMBTI();
+        const info = typeDetails[mbti] || defaultResult;
+        const imgHtml = info.img ? `<div class="result-img"><img src="${info.img}" alt="类型图片"></div>` : '';
+        const quizScreen = document.getElementById('quizScreen');
+        quizScreen.innerHTML = `
+            <div class="result-area">
+                ${imgHtml}
+                <div class="type-name">${info.name}</div>
+                <div class="type-desc">${info.desc}</div>
+                <div style="font-size:0.85rem; color:#9b7b64; margin: 1rem 0;">你的温柔代码 · ${mbti}</div>
+                <button class="restart-btn" id="restartBtn">🌼 重新测试</button>
+            </div>
+            <footer>✨ 你这样就很好</footer>
+        `;
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            // 重置所有数据
+            scores = { IE: 0, NS: 0, TF: 0, JP: 0 };
+            answers = [];
+            currentIndex = 0;
+            // 重新打乱题目顺序（可选，若希望每次重测顺序相同则注释下面一行）
+            questions = shuffleArray([...originalQuestions]);
+            // 重新计算各维度总题数（因为打乱不影响维度分布，但为了严谨可以重新计算）
+            totalPerDim = { IE: 0, NS: 0, TF: 0, JP: 0 };
+            questions.forEach(q => { totalPerDim[q.dim]++; });
+            // 回到开始界面
+            document.getElementById('startScreen').style.display = 'block';
+            quizScreen.style.display = 'none';
+            quizScreen.innerHTML = '';
+        });
+    }
+
+    // 开始测试按钮逻辑
+    document.getElementById('startBtn').addEventListener('click', () => {
+        document.getElementById('startScreen').style.display = 'none';
+        const quizScreen = document.getElementById('quizScreen');
+        quizScreen.style.display = 'block';
+        // 重置状态（全新开始）
+        scores = { IE: 0, NS: 0, TF: 0, JP: 0 };
+        answers = [];
+        currentIndex = 0;
+        // 如果希望每次开始测试都重新打乱顺序，可以取消下面一行的注释
+        // questions = shuffleArray([...originalQuestions]);
+        renderQuestion();
+    });
+
+    // 初始状态：开始界面显示，题目界面隐藏
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('quizScreen').style.display = 'none';
+</script>
+</body>
+</html>
